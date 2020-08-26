@@ -1,10 +1,12 @@
 package com.snj.dascleaner.lib;
 
+import android.content.Intent;
 import android.util.Log;
 import android.view.View;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 
+import com.snj.dascleaner.BLEActivity;
 import com.snj.dascleaner.MainActivity;
 
 public class AndroidBridge {
@@ -22,7 +24,31 @@ public class AndroidBridge {
 
     @JavascriptInterface
     public void BLESetting(final String msg) {
-        //Log.d(TAG, "MSG : " + msg);
-        mContext.SetDeviceListVisibility(View.VISIBLE);
+        mContext.ShowPairedDevices(0);
+    }
+
+    @JavascriptInterface
+    public void DoorLock() {
+        mContext.DoorLock();
+    }
+
+    @JavascriptInterface
+    public void DoorUnLock() {
+        mContext.DoorUnLock();
+    }
+
+    @JavascriptInterface
+    public void Start() {
+        mContext.Start();
+    }
+
+    @JavascriptInterface
+    public void Stop() {
+        mContext.Stop();
+    }
+
+    @JavascriptInterface
+    public void Driving() {
+        mContext.Driving();
     }
 }
