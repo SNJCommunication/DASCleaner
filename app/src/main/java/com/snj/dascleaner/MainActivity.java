@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         wv_content.setWebViewClient(new DasWebViewClient());
         wv_content.getSettings().setJavaScriptEnabled(true);
 
-        wv_content.loadUrl("http://158.247.198.222:8081/");
+        wv_content.loadUrl("http://158.247.198.222/das");
         ab = new AndroidBridge(wv_content, this);
         wv_content.addJavascriptInterface(ab, "DasApp");
 
