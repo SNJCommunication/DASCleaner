@@ -24,7 +24,7 @@ public class AndroidBridge {
 
     @JavascriptInterface
     public void BLESetting(final String msg) {
-        mContext.ShowPairedDevices(0);
+        //mContext.ShowPairedDevices(0);
     }
 
     @JavascriptInterface

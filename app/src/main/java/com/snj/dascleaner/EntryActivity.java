@@ -27,7 +27,6 @@ public class EntryActivity extends Activity {
             finish();
         }
         else {
-
             // OS 버전이 마시멜로 이상이라면 위치 권한이 있는지 점검 후 없다면 사용자에게 위치 권한을 요청
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 
