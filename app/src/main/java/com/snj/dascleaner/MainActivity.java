@@ -24,6 +24,8 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.webkit.ConsoleMessage;
+import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -204,6 +206,7 @@ public class MainActivity extends AppCompatActivity {
             mScanning = false;
         }
 
+        dlg.rlly_connecting.setVisibility(View.VISIBLE);
         mBluetoothGatt = device.connectGatt(this, false, mCallback );
     }
 
@@ -221,6 +224,10 @@ public class MainActivity extends AppCompatActivity {
                 catch (Exception e) {
                     e.printStackTrace();
                 }
+            }
+            else
+            {
+                dlg.rlly_connecting.setVisibility(View.GONE);
             }
         }
 
@@ -251,6 +258,25 @@ public class MainActivity extends AppCompatActivity {
             try
             {
                 byte[] readByte = characteristic.getValue();
+
+                if(readByte[readByte.length - 1] == '@')
+                {
+                    if(readByte[0] == 'T' && readByte[1] == 'R')    // 온도 수신
+                    {
+                        // 현재 온도 세팅
+
+                        ab.GetTemperature(new String(readByte, 2, 3));
+                        //wv_content.loadUrl("javascript:window.DasApp.setTemperature('33');");
+
+
+                    }
+                    else if(readByte[0] == 'H' && readByte[1] == 'R')   // 습도 수신
+                    {
+                        // 현재 습도 세팅
+                        ab.GetHumidity(new String(readByte, 2, 3));
+                    }
+                }
+
 
                 Log.d(TAG, "RECV : " + new String(readByte));
             }
@@ -470,6 +496,144 @@ public class MainActivity extends AppCompatActivity {
     public void Driving()
     {
         byte[] cmd = new byte[]{(byte)'$', (byte)'G', (byte)'O', (byte)'U', (byte)'U', (byte)'U', 0x00, (byte)'@'};
+        cmd[6] = (byte)(cmd[1] + cmd[2] + cmd[3] + cmd[4] + cmd[5]);
+
+        try {
+            writeData(cmd);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    public void setTemperature(String t)
+    {
+        int temp = 0;
+        try {
+            temp = (int)Double.parseDouble(t);
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+            Toast.makeText(this, "온도설정실패", Toast.LENGTH_LONG).show();
+        }
+        byte[] cmd = new byte[]{(byte)'$', (byte)'T', (byte)'S', (byte)'+', (byte)'2', (byte)'5', 0x00, (byte)'@'};
+
+        if(temp >= 0) cmd[3] = (byte)'+';
+        cmd[4] = (byte)(temp / 10 + 0x30);
+        cmd[5] = (byte)(temp % 10 + 0x30);
+        cmd[6] = (byte)(cmd[1] + cmd[2] + cmd[3] + cmd[4] + cmd[5]);
+
+        try {
+            writeData(cmd);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    public void setHumidity(String t)
+    {
+        int temp = 0;
+        try {
+            temp = (int)Double.parseDouble(t);
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+            Toast.makeText(this, "습도설정실패", Toast.LENGTH_LONG).show();
+        }
+        byte[] cmd = new byte[]{(byte)'$', (byte)'H', (byte)'S', (byte)'+', (byte)'2', (byte)'5', 0x00, (byte)'@'};
+
+        if(temp >= 0) cmd[3] = (byte)'+';
+        cmd[4] = (byte)(temp / 10 + 0x30);
+        cmd[5] = (byte)(temp % 10 + 0x30);
+        cmd[6] = (byte)(cmd[1] + cmd[2] + cmd[3] + cmd[4] + cmd[5]);
+
+        try {
+            writeData(cmd);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    public void setUltraTime(String t)
+    {
+        int temp = 0;
+        try {
+            temp = (int)Double.parseDouble(t);
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+            Toast.makeText(this, "살균모드 시간설정실패", Toast.LENGTH_LONG).show();
+        }
+        byte[] cmd = new byte[]{(byte)'$', (byte)'T', (byte)'U', (byte)'6', (byte)'0', (byte)'0', 0x00, (byte)'@'};
+
+        cmd[3] = (byte)(temp / 100 + 0x30);
+        cmd[4] = (byte)(((temp / 10) % 10) + 0x30);
+        cmd[5] = (byte)(temp % 10 + 0x30);
+        cmd[6] = (byte)(cmd[1] + cmd[2] + cmd[3] + cmd[4] + cmd[5]);
+
+        try {
+            writeData(cmd);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    public void setLightTime(String t)
+    {
+        int temp = 0;
+        try {
+            temp = (int)Double.parseDouble(t);
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+            Toast.makeText(this, "선라이크모드 시간설정실패", Toast.LENGTH_LONG).show();
+        }
+        byte[] cmd = new byte[]{(byte)'$', (byte)'T', (byte)'L', (byte)'6', (byte)'0', (byte)'0', 0x00, (byte)'@'};
+
+        cmd[3] = (byte)(temp / 100 + 0x30);
+        cmd[4] = (byte)(((temp / 10) % 10) + 0x30);
+        cmd[5] = (byte)(temp % 10 + 0x30);
+        cmd[6] = (byte)(cmd[1] + cmd[2] + cmd[3] + cmd[4] + cmd[5]);
+
+        try {
+            writeData(cmd);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    public void setUltra(String onoff)
+    {
+        byte[] cmd = new byte[]{(byte)'$', (byte)'U', (byte)'O', (byte)'6', (byte)'0', (byte)'0', 0x00, (byte)'@'};
+
+
+        cmd[2] = onoff.getBytes()[0];
+        cmd[6] = (byte)(cmd[1] + cmd[2] + cmd[3] + cmd[4] + cmd[5]);
+
+        try {
+            writeData(cmd);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    public void setLight(String onoff)
+    {
+        byte[] cmd = new byte[]{(byte)'$', (byte)'L', (byte)'O', (byte)'6', (byte)'0', (byte)'0', 0x00, (byte)'@'};
+
+
+        cmd[2] = onoff.getBytes()[0];
         cmd[6] = (byte)(cmd[1] + cmd[2] + cmd[3] + cmd[4] + cmd[5]);
 
         try {

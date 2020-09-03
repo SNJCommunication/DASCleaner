@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.os.Bundle;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 
@@ -16,6 +17,7 @@ public class BleDeviceDialog extends Dialog {
 
     ListView lstv_bledevices = null;
     LeDeviceListAdapter mLeDeviceListAdapter = null;
+    public  RelativeLayout rlly_connecting = null;
 
     public BleDeviceDialog(@NonNull Context context) {
         super(context);
@@ -32,6 +34,8 @@ public class BleDeviceDialog extends Dialog {
         lstv_bledevices = (ListView)findViewById(R.id.lstv_bledevices);
         mLeDeviceListAdapter = new LeDeviceListAdapter(context);
         lstv_bledevices.setAdapter(mLeDeviceListAdapter);
+
+        rlly_connecting = (RelativeLayout)findViewById(R.id.rlly_connecting);
     }
 
     public void AddDevice(BluetoothDevice device)
